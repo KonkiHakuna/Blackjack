@@ -32,6 +32,7 @@
 *.app
 
 # Visual studio
+.vs/
 *.suo
 *.db
 *.db-shm
@@ -43,3 +44,9 @@
 *.log
 *.vsidx
 *.backup.json
+
+# Build folders
+Debug/
+Release/
+x64/
+ARM64
