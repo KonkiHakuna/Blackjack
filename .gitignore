@@ -30,3 +30,16 @@
 *.exe
 *.out
 *.app
+
+# Visual studio
+*.suo
+*.db
+*.db-shm
+*.db-wal
+*.VC.db
+*.VC.opendb
+*.vscode/
+*.user
+*.log
+*.vsidx
+*.backup.json
