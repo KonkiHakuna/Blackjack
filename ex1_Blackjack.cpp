@@ -1,4 +1,5 @@
-﻿#include <iostream>
+﻿#include <algorithm>
+#include <iostream>
 
 using namespace std;
 
@@ -160,11 +161,18 @@ public:
 	}
 
 	void Shuffle() {
+		Initialize();
 		srand(time(NULL));
-
 		for (int i = 0; i < m_size; ++i) {
 			int index = rand() % m_size;
 			swap(m_cards[i], m_cards[index]);
+		}
+	}
+
+	void CheckSizeAndShuffle() {
+		if (m_size<10) {
+			cout << "\nLow on cards, reshuffling the deck...\n";
+			Shuffle();
 		}
 	}
 
@@ -279,8 +287,13 @@ private:
 class Game {
 	// Logic of the entire game
 public:
-	void GameStart() {
+
+	Game() {
 		deck.Shuffle();
+	}
+
+	void GameStart() {
+		deck.CheckSizeAndShuffle();
 		p_hand.Reset();
 		d_hand.Reset();
 		p_hand.AddPlayerHand(deck);
@@ -326,7 +339,7 @@ public:
 				cin >> ans;
 			}
 		}
-		cout << "Wow, Blackjack! You've got exactly 21 points. ";
+		cout << "Wow, Blackjack! You've got exactly 21 points.\n";
 	}
 	void DealersTurn() {
 		if (p_hand.AmountOfPoints() <= 21) {
