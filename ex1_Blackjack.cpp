@@ -2,10 +2,10 @@
 
 using namespace std;
 
-//Blackjack
+// Blackjack
 
 enum class Color {
-	//Deklaracja kolorów kart
+	// Declaration of card colors
 	Heart = 0,
 	Diamond,
 	Spade,
@@ -15,7 +15,7 @@ enum class Color {
 };
 
 void Print(Color color) {
-	//Wypisywanie koloru karty
+	//  Printing card colors
 	switch (color) {
 	case Color::Heart:
 		cout << "Heart";
@@ -35,7 +35,7 @@ void Print(Color color) {
 }
 
 enum class Value {
-	//Deklaracja wartości kart
+	// Declaration of card values
 	Two = 0,
 	Three,
 	Four,
@@ -54,7 +54,7 @@ enum class Value {
 };
 
 void Print(Value value) {
-	//Wypisywanie wartości karty
+	// Printing card values
 	switch (value)
 	{
 	case Value::Two:
@@ -103,7 +103,7 @@ void Print(Value value) {
 }
 
 class Card {
-	//Klasa buduje i reprezentuje karte
+	// Building and representing a card
 public:
 	friend class Game;
 	friend class Hand;
@@ -120,16 +120,13 @@ public:
 		Print(m_value);
 	}
 
-	// operator>
-	// operator<
-
 private:
 	Color m_color = Color::Heart;
 	Value m_value = Value::Two;
 };
 
 class Deck {
-	//Tworzenie talii kart, tasowanie i rozdawanie
+	// Building a deck of cards, shuffling and dealing cards
 public:
 	friend class Game;
 	friend class Hand;
@@ -187,7 +184,7 @@ private:
 };
 
 class Hand {
-	//Reka gracza - wyswietlanie kart i zwracanie wartosci punktowej
+	// Player's hand - displaying cards and returning points
 public:
 	friend class Game;
 	void AddPlayerHand(Deck& deck) {
@@ -217,20 +214,24 @@ public:
 		return SumOfPoints;
 	}
 	void Print() {
-		cout << "Twoje karty to:" << endl;
+		cout << "\nYour cards are: " << endl;
 		for (int i = 0; i < NumberOfCards; ++i) {
 			p_Hand[i].PrintCard();
 			cout << endl;
 		}
-		cout << "Lacznie masz: " << AmountOfPoints() << endl;
+		cout << "Total points: " << AmountOfPoints() << endl;
 	}
+	void Reset() {
+		NumberOfCards = 0;
+	}
+
 private:
 	Card p_Hand[52];
 	int NumberOfCards = 0;
 };
 
 class DealerHand {
-	//Reka krupiera - wyswietlanie kart i zwracanie wartosci punktowej
+	// Dealer's hand - displaying cards and returning points
 public:
 	void AddDealerHand(Deck& deck) {
 		d_Hand[NumberOfCards] = deck.Deal();
@@ -259,12 +260,15 @@ public:
 		return SumOfPoints;
 	}
 	void Print() {
-		cout << "Karty krupiera to:" << endl;
+		cout << "Dealer's cards: " << endl;
 		for (int i = 0; i < NumberOfCards; ++i) {
 			d_Hand[i].PrintCard();
 			cout << endl;
 		}
-		cout << "Lacznie masz: " << DealersAmountOfPoints() << endl;
+		cout << "Total points: " << DealersAmountOfPoints() << endl << endl;
+	}
+	void Reset() {
+		NumberOfCards = 0;
 	}
 
 private:
@@ -273,10 +277,12 @@ private:
 };
 
 class Game {
-	//Logika calej gry
+	// Logic of the entire game
 public:
 	void GameStart() {
 		deck.Shuffle();
+		p_hand.Reset();
+		d_hand.Reset();
 		p_hand.AddPlayerHand(deck);
 		p_hand.AddPlayerHand(deck);
 		d_hand.AddDealerHand(deck);
@@ -290,9 +296,9 @@ public:
 	}
 	void PlayersTurn() {
 		string ans;
-		cout << endl << "Tura gracza:" << endl;
+		cout << endl << "Player's turn:" << endl;
 		if (p_hand.AmountOfPoints() < 21) {
-			cout << "Czy chcesz dobrac karte(Hit) czy zostajesz na tym co masz(Stand)?";
+			cout << "Do you want to draw a card (Hit) or stay with your current hand (Stand)? ";
 			cin >> ans;
 			while (true) {
 				for (int i = 0; i < ans.length(); i++) {
@@ -302,11 +308,11 @@ public:
 					p_hand.AddPlayerHand(deck);
 					p_hand.Print();
 					if (p_hand.AmountOfPoints() > 21) {
-						cout << "Bust! Przekroczyles 21 punktow.";
+						cout << "Bust! You've exceeded 21 points.";
 						return;
 					}
 					if (p_hand.AmountOfPoints() == 21) {
-						cout << "Blackjack! Masz dokladnie 21 punktow.";
+						cout << "Wow! Exactly 21 points.";
 						return;
 					}
 				}
@@ -314,46 +320,42 @@ public:
 					return;
 				}
 				else {
-					cout << "Bledna komenda.";
-					cin >> ans;
+					cout << "Invalid command. Try again: \n";
 				}
-				cout << "Dobierasz czy zostajesz? (Hit or Stand):";
+				cout << "Hit or stand? ";
 				cin >> ans;
 			}
 		}
-		cout << "Wow, Blackjack! Masz 21 punktow.";
+		cout << "Wow, Blackjack! You've got exactly 21 points. ";
 	}
 	void DealersTurn() {
 		if (p_hand.AmountOfPoints() <= 21) {
-			cout << endl << "Tura Krupiera: " << endl;
+			cout << endl << "Dealer's turn: " << endl;
 			while (d_hand.DealersAmountOfPoints() < 17) {
 				d_hand.AddDealerHand(deck);
 				d_hand.Print();
-			}
-			if (d_hand.DealersAmountOfPoints() > 21) {
-				cout << "Bust ze strony Krupiera!";
 			}
 		}
 	}
 	void GameState() {
 		if (p_hand.AmountOfPoints() > 21) {
-			cout << "Przegrana gracza!";
+			cout << "You lost!";
 			return;
 		}
 		else if (d_hand.DealersAmountOfPoints() > 21) {
-			cout << "Wygrales! Krupier przekroczyl 21 punktow.";
+			cout << "You won! Dealer busted.\n";
 			return;
 		}
 		else if (p_hand.AmountOfPoints() > d_hand.DealersAmountOfPoints()) {
-			cout << "Wygrales! Masz wiecej punktow od Krupiera.";
+			cout << "You won! You have more points than dealer.\n";
 			return;
 		}
 		else if (p_hand.AmountOfPoints() < d_hand.DealersAmountOfPoints()) {
-			cout << "Przegrales! Krupier ma wiecej punktow od ciebie";
+			cout << "You lost! Dealer has more points than you.\n";
 			return;
 		}
 		else {
-			cout << "Remis!";
+			cout << "It's a tie!\n";
 		}
 	}
 private:
@@ -364,18 +366,45 @@ private:
 };
 
 int main() {
+	// Main function
 	Game game;
 	string ans;
-	cout << "Witamy w naszym kasynie!\nNa razie dostepny jest tylko BlackJack, czy chcialbys zagrac? (Tak/Nie): ";
+	bool play = true;
+
+	cout << "Welcome to my Blackjack game!\nWould you like to play a round? (Yes/No) ";
 	cin >> ans;
 	for (int i = 0; i < ans.length(); i++) {
 		ans[i] = tolower(ans[i]);
 	}
-	if (ans == "tak") {
-		game.GameStart();
+	while (ans != "yes" and ans != "no") {
+		cout << "Invalid command. Try again: \n";
+		cin >> ans;
+		for (int i = 0; i < ans.length(); i++) {
+			ans[i] = tolower(ans[i]);
+		}
 	}
-	else {
-		cout << "Szkoda, zapraszamy nastepnym razem";
+	if (ans == "no") {
+		cout << "Alright, see you next time!";
+		return 0;
+	}
+	while (play) {
+		game.GameStart();
+		cout << endl << "\nWould you like to play again? (Yes/No) ";
+		cin >> ans;
+		for (int i = 0; i < ans.length(); i++) {
+			ans[i] = tolower(ans[i]);
+		}
+		while (ans != "yes" and ans != "no") {
+			cout << "Invalid command. Try again: \n";
+			cin >> ans;
+			for (int i = 0; i < ans.length(); i++) {
+				ans[i] = tolower(ans[i]);
+			}
+		}
+		if (ans == "no") {
+			cout << "Alright, see you next time!";
+			play = false;
+		}
 	}
 	return 0;
 }
