@@ -1,0 +1,3 @@
+﻿  ex1_Blackjack.cpp
+C:\Users\konra\OneDrive\Pulpit\C++ Projects\ex1_Blackjack\ex1_Blackjack.cpp(166,13): warning C4244: "argument": konwersja z "time_t" do "unsigned int", możliwa utrata danych
+  ex1_Blackjack.vcxproj -> C:\Users\konra\OneDrive\Pulpit\C++ Projects\ex1_Blackjack\ARM64\Debug\ex1_Blackjack.exe
